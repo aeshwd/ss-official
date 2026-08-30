@@ -1,0 +1,889 @@
+<!DOCTYPE html>
+<html lang="en" class="scroll-smooth dark">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Skyline Syntax | Powered by Aesh Software Agency</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    colors: {
+                        background: '#030712',
+                        surface: '#0f172a',
+                    },
+                    fontFamily: {
+                        sans: ['Plus Jakarta Sans', 'sans-serif'],
+                    }
+                }
+            }
+        }
+    </script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/vanilla-tilt/1.8.0/vanilla-tilt.min.js"></script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap');
+        
+        body {
+            background-color: #030712;
+            color: #f3f4f6;
+            overflow-x: hidden;
+        }
+
+        .mesh-gradient {
+            background-image: 
+                radial-gradient(at 0% 0%, rgba(99, 102, 241, 0.12) 0px, transparent 50%),
+                radial-gradient(at 100% 0%, rgba(168, 85, 247, 0.12) 0px, transparent 50%),
+                radial-gradient(at 50% 100%, rgba(236, 72, 153, 0.08) 0px, transparent 50%);
+        }
+
+        @keyframes marquee {
+            0% { transform: translateX(0%); }
+            100% { transform: translateX(-50%); }
+        }
+        .animate-marquee {
+            display: flex;
+            width: 200%;
+            animation: marquee 30s linear infinite;
+        }
+        .animate-marquee:hover {
+            animation-play-state: paused;
+        }
+
+        .glass-card {
+            background: rgba(15, 23, 42, 0.6);
+            backdrop-filter: blur(24px);
+            -webkit-backdrop-filter: blur(24px);
+            border: 1px solid rgba(255, 255, 255, 0.06);
+            box-shadow: 0 20px 50px rgba(0, 0, 0, 0.5);
+            transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+
+        .glass-card:hover {
+            border-color: rgba(99, 102, 241, 0.35);
+            box-shadow: 0 0 40px rgba(99, 102, 241, 0.15), inset 0 0 20px rgba(99, 102, 241, 0.05);
+        }
+
+        ::-webkit-scrollbar {
+            width: 6px;
+        }
+        ::-webkit-scrollbar-track {
+            background: #030712;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #1e293b;
+            border-radius: 3px;
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: #6366f1;
+        }
+    </style>
+</head>
+<body class="selection:bg-indigo-500 selection:text-white mesh-gradient min-h-screen">
+
+    <div id="verification-overlay" class="fixed inset-0 z-50 flex items-center justify-center bg-slate-950/95 backdrop-blur-3xl px-4">
+        <div class="glass-card p-8 md:p-10 rounded-[2.5rem] max-w-md w-full shadow-2xl relative overflow-hidden text-center border border-indigo-500/20">
+            <div class="absolute -top-16 -right-16 w-40 h-40 bg-indigo-500/20 rounded-full blur-3xl pointer-events-none"></div>
+            <div class="absolute -bottom-16 -left-16 w-40 h-40 bg-purple-500/20 rounded-full blur-3xl pointer-events-none"></div>
+            
+            <div class="w-16 h-16 rounded-2xl bg-gradient-to-tr from-indigo-500/20 to-purple-500/20 border border-indigo-500/30 flex items-center justify-center text-indigo-400 mx-auto mb-6 text-2xl shadow-inner">
+                <i class="fa-solid fa-shield-halved"></i>
+            </div>
+            
+            <h2 class="text-2xl font-extrabold tracking-tight mb-2 text-white" data-en="Human Verification" data-hi="मानव सत्यापन">Human Verification</h2>
+            <p class="text-slate-400 text-xs md:text-sm mb-6 leading-relaxed" data-en="To prevent automated spam bots, solve this elementary addition:" data-hi="स्वचालित स्पैम बॉट्स को रोकने के लिए, इस प्राथमिक जोड़ को हल करें:">To prevent automated spam bots, solve this elementary addition:</p>
+            
+            <div class="bg-slate-900/80 p-4 rounded-2xl border border-slate-800/80 mb-6 font-mono text-2xl text-indigo-300 font-bold tracking-widest shadow-inner">
+                5 + 3 = <span class="text-pink-400 underline decoration-pink-500/50">?</span>
+            </div>
+
+            <form id="puzzle-form" onsubmit="verifyPuzzle(event)" class="space-y-4">
+                <input type="number" id="puzzle-answer" required placeholder="Type answer (8)..." 
+                    class="w-full bg-slate-900/90 border border-slate-800 rounded-2xl px-4 py-3.5 text-center text-lg text-white placeholder-slate-600 focus:outline-none focus:border-indigo-500 transition-all shadow-inner">
+                <button type="submit" class="w-full py-3.5 px-6 rounded-2xl bg-gradient-to-r from-indigo-500 via-purple-600 to-pink-500 font-bold text-white shadow-lg shadow-indigo-500/25 hover:opacity-95 transition-all text-sm tracking-wide" data-en="Enter Platform" data-hi="प्लेटफ़ॉर्म दर्ज करें">
+                    Enter Platform
+                </button>
+            </form>
+            <p id="puzzle-error" class="text-rose-400 text-xs mt-3 hidden font-medium" data-en="Incorrect answer! Try again." data-hi="गलत उत्तर! पुनः प्रयास करें।">Incorrect answer! Try again.</p>
+        </div>
+    </div>
+
+    <div id="main-content" class="opacity-100 transition-opacity duration-1000">
+        
+        <header class="fixed top-0 left-0 right-0 z-40 bg-slate-950/60 backdrop-blur-xl border-b border-white/5 transition-all">
+            <div class="max-w-7xl mx-auto px-6 h-20 flex items-center justify-between">
+                <a href="#home" class="flex items-center gap-3 group">
+                    <div class="w-10 h-10 rounded-xl bg-gradient-to-tr from-indigo-500 to-purple-600 flex items-center justify-center font-extrabold text-sm shadow-lg shadow-indigo-500/30 group-hover:scale-105 transition-transform text-white">
+                        SS
+                    </div>
+                    <div>
+                        <span class="font-extrabold tracking-wider text-sm block leading-tight text-white">SKYLINE SYNTAX</span>
+                        <span class="text-[9px] text-indigo-400 font-bold tracking-widest uppercase" data-en="x Aesh Agency" data-hi="x ऐश एजेंसी">x Aesh Agency</span>
+                    </div>
+                </a>
+
+                <nav class="hidden lg:flex items-center gap-7 text-xs font-semibold text-slate-300">
+                    <a href="#home" class="hover:text-white transition-colors" data-en="Home" data-hi="होम">Home</a>
+                    <a href="#branches" class="hover:text-white transition-colors" data-en="Global Presence" data-hi="शाखाएं">Global Presence</a>
+                    <a href="#about" class="hover:text-white transition-colors" data-en="About" data-hi="हमारे बारे में">About</a>
+                    <a href="#services" class="hover:text-white transition-colors" data-en="Services" data-hi="सेवाएं">Services</a>
+                    <a href="#pricing" class="hover:text-white transition-colors" data-en="Pricing" data-hi="मूल्य निर्धारण">Pricing</a>
+                    <a href="#projects" class="hover:text-white transition-colors" data-en="Portfolio" data-hi="पोर्टफोलियो">Portfolio</a>
+                    <a href="#testimonials" class="hover:text-white transition-colors" data-en="Testimonials" data-hi="समीक्षाएं">Testimonials</a>
+                </nav>
+
+                <div class="flex items-center gap-3">
+                    <button onclick="toggleLanguage()" class="px-3 py-2 rounded-xl bg-slate-900/80 border border-slate-800 text-xs font-bold text-indigo-400 hover:bg-slate-800 transition-all flex items-center gap-1.5 shadow-sm">
+                        <i class="fa-solid fa-globe text-[10px]"></i>
+                        <span id="lang-label">HI / EN</span>
+                    </button>
+                    <button onclick="openAdminLoginModal()" class="px-3 py-2 rounded-xl bg-gradient-to-r from-amber-500 to-rose-600 hover:opacity-90 text-xs font-bold text-white shadow-lg shadow-amber-600/20 transition-all flex items-center gap-1.5">
+                        <i class="fa-solid fa-lock text-[10px]"></i>
+                        <span data-en="Admin Portal" data-hi="एडमिन पोर्टल">Admin Portal</span>
+                    </button>
+                    <a href="#contact" class="px-5 py-2.5 rounded-xl bg-gradient-to-r from-indigo-500 to-purple-600 hover:opacity-90 text-xs font-bold text-white shadow-lg shadow-indigo-600/20 transition-all hidden sm:inline-block tracking-wide" data-en="Let's Talk" data-hi="संपर्क करें">
+                        Let's Talk
+                    </a>
+                </div>
+            </div>
+        </header>
+
+        <section id="home" class="relative pt-36 pb-28 md:pt-48 md:pb-36 px-6 overflow-hidden">
+            <div class="absolute top-1/4 left-1/2 -translate-x-1/2 w-[500px] h-[500px] bg-indigo-600/10 rounded-full blur-[140px] pointer-events-none parallax-element" data-speed="0.2"></div>
+            
+            <div class="max-w-5xl mx-auto text-center parallax-element relative z-10" data-speed="0.5">
+                <div class="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-indigo-500/10 border border-indigo-500/20 text-indigo-300 text-xs font-semibold mb-6 shadow-inner backdrop-blur-md">
+                    <span class="w-2 h-2 rounded-full bg-indigo-400 animate-pulse"></span>
+                    <span data-en="5+ Years of Proven Digital Engineering" data-hi="5+ वर्षों का सिद्ध डिजिटल इंजीनियरिंग अनुभव">5+ Years of Proven Digital Engineering</span>
+                </div>
+                
+                <h1 class="text-4xl sm:text-6xl md:text-7xl font-extrabold tracking-tight mb-6 leading-tight">
+                    <span data-en="Architecting" data-hi="निर्माण कर रहे हैं">Architecting</span> 
+                    <span class="text-transparent bg-clip-text bg-gradient-to-r from-indigo-400 via-purple-400 to-pink-400" data-en="Next-Generation" data-hi="अगली पीढ़ी के">Next-Generation</span> 
+                    <span data-en="Digital Experiences." data-hi="डिजिटल अनुभव।">Digital Experiences.</span>
+                </h1>
+                
+                <p class="text-sm sm:text-lg text-slate-400 max-w-2xl mx-auto mb-10 leading-relaxed" data-en="Powering global enterprises with hyper-fast web applications, creative motion UI/UX, and robust scalable engineering." data-hi="अति-तेज वेब अनुप्रयोगों, रचनात्मक गति UI/UX, और मजबूत स्केलेबल इंजीनियरिंग के साथ वैश्विक उद्यमों को सशक्त बनाना।">
+                    Powering global enterprises with hyper-fast web applications, creative motion UI/UX, and robust scalable engineering.
+                </p>
+                
+                <div class="flex flex-col sm:flex-row items-center justify-center gap-4">
+                    <a href="#services" class="w-full sm:w-auto px-8 py-4 rounded-2xl bg-gradient-to-r from-indigo-500 via-purple-600 to-pink-500 font-bold text-white shadow-xl shadow-indigo-500/25 hover:opacity-95 transition-all text-center text-sm tracking-wide" data-en="Explore Our Services" data-hi="हमारी सेवाएं देखें">
+                        Explore Our Services
+                    </a>
+                    <a href="#contact" class="w-full sm:w-auto px-8 py-4 rounded-2xl glass-card font-bold text-white hover:bg-white/5 transition-all text-center border border-white/10 text-sm tracking-wide" data-en="Book Strategy Call" data-hi="रणनीति कॉल बुक करें">
+                        Book Strategy Call
+                    </a>
+                </div>
+            </div>
+        </section>
+
+        <section id="branches" class="py-24 px-6 max-w-7xl mx-auto relative">
+            <div class="text-center mb-16">
+                <h2 class="text-3xl md:text-4xl font-extrabold mb-3 text-white" data-en="Our Global Footprint" data-hi="हमारी वैश्विक उपस्थिति">Our Global Footprint</h2>
+                <p class="text-slate-400 text-sm" data-en="Delivering world-class solutions across international time zones." data-hi="अंतर्राष्ट्रीय समय क्षेत्रों में विश्व स्तरीय समाधान प्रदान करना।">Delivering world-class solutions across international time zones.</p>
+            </div>
+            
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+                <div class="glass-card p-8 rounded-[2rem] relative group" data-tilt data-tilt-max="5" data-tilt-speed="400" data-tilt-perspective="1000">
+                    <div class="text-4xl mb-4">🇮🇳</div>
+                    <h3 class="text-xl font-bold mb-2 text-white" data-en="India (HQ)" data-hi="भारत (मुख्यालय)">India (HQ)</h3>
+                    <p class="text-slate-400 text-xs sm:text-sm mb-6 leading-relaxed" data-en="Core Engineering, Advanced Architecture & Full-Stack Delivery Center." data-hi="कोर इंजीनियरिंग, उन्नत वास्तुकला और फुल-स्टैक डिलीवरी केंद्र।">Core Engineering, Advanced Architecture & Full-Stack Delivery Center.</p>
+                    <span class="inline-block px-3 py-1 rounded-lg bg-indigo-500/10 text-indigo-400 text-xs font-semibold border border-indigo-500/20" data-en="Primary Hub" data-hi="प्राथमिक केंद्र">Primary Hub</span>
+                </div>
+                <div class="glass-card p-8 rounded-[2rem] relative group" data-tilt data-tilt-max="5" data-tilt-speed="400" data-tilt-perspective="1000">
+                    <div class="text-4xl mb-4">🇨🇦</div>
+                    <h3 class="text-xl font-bold mb-2 text-white" data-en="Canada" data-hi="कनाडा">Canada</h3>
+                    <p class="text-slate-400 text-xs sm:text-sm mb-6 leading-relaxed" data-en="North American Client Relations, Strategy & Scaled Operations." data-hi="उत्तर अमेरिकी ग्राहक संबंध, रणनीति और स्केल किए गए संचालन।">North American Client Relations, Strategy & Scaled Operations.</p>
+                    <span class="inline-block px-3 py-1 rounded-lg bg-purple-500/10 text-purple-400 text-xs font-semibold border border-purple-500/20" data-en="Operations Office" data-hi="संचालन कार्यालय">Operations Office</span>
+                </div>
+                <div class="glass-card p-8 rounded-[2rem] relative group" data-tilt data-tilt-max="5" data-tilt-speed="400" data-tilt-perspective="1000">
+                    <div class="text-4xl mb-4">🇦🇺</div>
+                    <h3 class="text-xl font-bold mb-2 text-white" data-en="Australia" data-hi="ऑस्ट्रेलिया">Australia</h3>
+                    <p class="text-slate-400 text-xs sm:text-sm mb-6 leading-relaxed" data-en="Oceania Solutions Partner & Regional Enterprise Consulting." data-hi="ओशिनिया समाधान भागीदार और क्षेत्रीय उद्यम परामर्श।">Oceania Solutions Partner & Regional Enterprise Consulting.</p>
+                    <span class="inline-block px-3 py-1 rounded-lg bg-pink-500/10 text-pink-400 text-xs font-semibold border border-pink-500/20" data-en="Delivery Partner" data-hi="डिलीवरी पार्टनर">Delivery Partner</span>
+                </div>
+            </div>
+        </section>
+
+        <section id="about" class="py-24 px-6 bg-slate-900/30 border-y border-white/5 relative overflow-hidden">
+            <div class="max-w-4xl mx-auto text-center relative z-10">
+                <span class="text-indigo-400 text-xs font-bold tracking-widest uppercase mb-2 block" data-en="Evolution & Synergy" data-hi="विकास और तालमेल">Evolution & Synergy</span>
+                <h2 class="text-3xl md:text-5xl font-extrabold mb-8 text-white" data-en="About Skyline Syntax x Aesh" data-hi="स्काईलाइन सिंटैक्स x ऐश के बारे में">About Skyline Syntax x Aesh</h2>
+                
+                <div class="glass-card p-8 md:p-12 rounded-[2.5rem] text-left relative overflow-hidden shadow-2xl">
+                    <div class="absolute -right-20 -bottom-20 w-60 h-60 bg-indigo-600/15 rounded-full blur-3xl pointer-events-none"></div>
+                    <p class="text-slate-300 text-sm md:text-base leading-relaxed mb-6" data-en="Skyline Syntax Software Agency is now officially merged with Aesh Software Agency, bringing you enhanced digital solutions under one unified global banner." data-hi="स्काईलाइन सिंटैक्स सॉफ्टवेयर एजेंसी अब आधिकारिक तौर पर ऐश सॉफ्टवेयर एजेंसी के साथ विलय कर चुकी है, जो आपके लिए एक एकीकृत वैश्विक बैनर के तहत उन्नत डिजिटल समाधान लाती है।">
+                        Skyline Syntax Software Agency is now officially merged with <strong class="text-white font-semibold">Aesh Software Agency</strong>, bringing you enhanced digital solutions under one unified global banner. 
+                    </p>
+                    <p class="text-slate-400 text-xs md:text-sm leading-relaxed mb-8" data-en="With over 5+ years of cumulative industry experience, we specialize in high-impact engineering, cutting-edge UI/UX aesthetics, and mission-critical cloud deployments. Our recent merger empowers us with increased engineering bandwidth, specialized cross-border teams, and faster turnaround times." data-hi="5+ वर्षों के संचयी उद्योग अनुभव के साथ, हम हाई-इम्पैक्ट इंजीनियरिंग, अत्याधुनिक UI/UX सौंदर्यशास्त्र और मिशन-महत्वपूर्ण क्लाउड परिनियोजन में विशेषज्ञ हैं।">
+                        With over 5+ years of cumulative industry experience, we specialize in high-impact engineering, cutting-edge UI/UX aesthetics, and mission-critical cloud deployments. Our recent merger empowers us with increased engineering bandwidth, specialized cross-border teams, and faster turnaround times.
+                    </p>
+                    <div class="p-4 rounded-2xl bg-indigo-500/10 border border-indigo-500/20 text-indigo-300 text-xs md:text-sm flex items-start gap-3">
+                        <i class="fa-solid fa-circle-info text-base mt-0.5"></i>
+                        <span><strong data-en="FAQ Check:" data-hi="सामान्य प्रश्न:">FAQ Check:</strong> <span data-en="How can I get in touch with Skyline Syntax? Skyline Syntax Software Agency is now merged with Aesh Software Agency, bringing you enhanced digital solutions under one roof." data-hi="मैं स्काईलाइन सिंटैक्स से कैसे संपर्क कर सकता हूं? स्काईलाइन सिंटैक्स सॉफ्टवेयर एजेंसी अब ऐश सॉफ्टवेयर एजेंसी के साथ विलय कर चुकी है।">How can I get in touch with Skyline Syntax? Skyline Syntax Software Agency is now merged with Aesh Software Agency, bringing you enhanced digital solutions under one roof.</span></span>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section id="services" class="py-24 px-6 max-w-7xl mx-auto">
+            <div class="text-center mb-16">
+                <h2 class="text-3xl md:text-4xl font-extrabold mb-3 text-white" data-en="Our Core Capabilities" data-hi="हमारी मुख्य क्षमताएं">Our Core Capabilities</h2>
+                <p class="text-slate-400 text-sm" data-en="Engineered for extreme performance and stunning modern aesthetics." data-hi="अति प्रदर्शन और आश्चर्यजनक आधुनिक सौंदर्यशास्त्र के लिए इंजीनियर किया गया।">Engineered for extreme performance and stunning modern aesthetics.</p>
+            </div>
+            
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+                <div class="glass-card p-6 rounded-[2rem]">
+                    <div class="w-12 h-12 rounded-2xl bg-indigo-500/10 text-indigo-400 flex items-center justify-center text-lg font-bold mb-4 border border-indigo-500/20">
+                        <i class="fa-solid fa-code"></i>
+                    </div>
+                    <h3 class="font-bold text-base mb-2 text-white" data-en="Custom Web Apps" data-hi="कस्टम वेब ऐप्स">Custom Web Apps</h3>
+                    <p class="text-slate-400 text-xs leading-relaxed" data-en="Scalable full-stack applications built using modern frameworks and cloud-native architecture." data-hi="आधुनिक फ्रेमवर्क और क्लाउड-नेटिव आर्किटेक्चर का उपयोग करके बनाए गए स्केलेबल फुल-स्टैक एप्लिकेशन।">Scalable full-stack applications built using modern frameworks and cloud-native architecture.</p>
+                </div>
+                <div class="glass-card p-6 rounded-[2rem]">
+                    <div class="w-12 h-12 rounded-2xl bg-purple-500/10 text-purple-400 flex items-center justify-center text-lg font-bold mb-4 border border-purple-500/20">
+                        <i class="fa-solid fa-wand-magic-sparkles"></i>
+                    </div>
+                    <h3 class="font-bold text-base mb-2 text-white" data-en="Interactive UI/UX" data-hi="इंटरैक्टिव UI/UX">Interactive UI/UX</h3>
+                    <p class="text-slate-400 text-xs leading-relaxed" data-en="Motion-driven, immersive interfaces designed with GSAP, Tailwind, and custom interactions." data-hi="GSAP, Tailwind और कस्टम इंटरैक्शन के साथ डिज़ाइन किए गए मोशन-संचालित, इमर्सिव इंटरफेस।">Motion-driven, immersive interfaces designed with GSAP, Tailwind, and custom interactions.</p>
+                </div>
+                <div class="glass-card p-6 rounded-[2rem]">
+                    <div class="w-12 h-12 rounded-2xl bg-pink-500/10 text-pink-400 flex items-center justify-center text-lg font-bold mb-4 border border-pink-500/20">
+                        <i class="fa-solid fa-cloud"></i>
+                    </div>
+                    <h3 class="font-bold text-base mb-2 text-white" data-en="Cloud & DevOps" data-hi="क्लाउड और देवऑप्स">Cloud & DevOps</h3>
+                    <p class="text-slate-400 text-xs leading-relaxed" data-en="Robust server setups, automated CI/CD pipelines, and high-availability edge deployments." data-hi="मजबूत सर्वर सेटअप, स्वचालित CI/CD पाइपलाइन, और उच्च-उपलब्धता एज परिनियोजन।">Robust server setups, automated CI/CD pipelines, and high-availability edge deployments.</p>
+                </div>
+                <div class="glass-card p-6 rounded-[2rem]">
+                    <div class="w-12 h-12 rounded-2xl bg-emerald-500/10 text-emerald-400 flex items-center justify-center text-lg font-bold mb-4 border border-emerald-500/20">
+                        <i class="fa-solid fa-chart-line"></i>
+                    </div>
+                    <h3 class="font-bold text-base mb-2 text-white" data-en="Enterprise Portals" data-hi="एंटरप्राइज पोर्टल">Enterprise Portals</h3>
+                    <p class="text-slate-400 text-xs leading-relaxed" data-en="Secure e-commerce ecosystems, customized CRM integrations, and heavy-duty workflow tools." data-hi="सुरक्षित ई-कॉमर्स इकोसिस्टम, अनुकूलित CRM एकीकरण, और भारी-भरकम वर्कफ़्लो टूल।">Secure e-commerce ecosystems, customized CRM integrations, and heavy-duty workflow tools.</p>
+                </div>
+            </div>
+        </section>
+
+        <section class="py-10 bg-slate-900/60 overflow-hidden border-y border-white/5">
+            <div class="text-center mb-4">
+                <span class="text-[10px] font-bold tracking-widest text-slate-500 uppercase" data-en="Trusted by Industry Innovators Worldwide" data-hi="दुनिया भर के उद्योग नवप्रवर्तकों द्वारा विश्वसनीय">Trusted by Industry Innovators Worldwide</span>
+            </div>
+            <div class="relative w-full overflow-hidden">
+                <div class="animate-marquee flex gap-12 items-center text-slate-500 font-bold text-sm tracking-widest">
+                    <span>⚡ TECHCORP GLOBAL</span>
+                    <span>•</span>
+                    <span>🚀 APEX SYSTEMS</span>
+                    <span>•</span>
+                    <span>🌐 NOVASYNC LABS</span>
+                    <span>•</span>
+                    <span>💎 VERTEX AI</span>
+                    <span>•</span>
+                    <span>⚡ QUANTUM EDGE</span>
+                    <span>•</span>
+                    <span>🚀 ZEPHYR MEDIA</span>
+                    <span>⚡ TECHCORP GLOBAL</span>
+                    <span>•</span>
+                    <span>🚀 APEX SYSTEMS</span>
+                    <span>•</span>
+                    <span>🌐 NOVASYNC LABS</span>
+                    <span>•</span>
+                    <span>💎 VERTEX AI</span>
+                    <span>•</span>
+                    <span>⚡ QUANTUM EDGE</span>
+                    <span>•</span>
+                    <span>🚀 ZEPHYR MEDIA</span>
+                </div>
+            </div>
+        </section>
+
+        <section id="projects" class="py-24 px-6 max-w-7xl mx-auto">
+            <div class="text-center mb-16">
+                <h2 class="text-3xl md:text-4xl font-extrabold mb-3 text-white" data-en="Featured Projects" data-hi="विशेष रुप से प्रदर्शित परियोजनाएं">Featured Projects</h2>
+                <p class="text-slate-400 text-sm" data-en="A showcase of high-end digital products crafted by our engineering teams." data-hi="हमारी इंजीनियरिंग टीमों द्वारा तैयार किए गए हाई-एंड डिजिटल उत्पादों का एक शोकेस।">A showcase of high-end digital products crafted by our engineering teams.</p>
+            </div>
+
+            <div id="projects-grid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+                <div class="glass-card p-6 rounded-[2.5rem] flex flex-col justify-between group">
+                    <div>
+                        <div class="h-44 rounded-2xl bg-gradient-to-br from-indigo-950 to-purple-950 flex items-center justify-center relative overflow-hidden mb-6 border border-white/5">
+                            <span class="text-sm font-extrabold tracking-widest text-indigo-300">FINTECH CORE OS</span>
+                        </div>
+                        <div class="flex items-center justify-between mb-2">
+                            <h3 class="text-base font-bold text-white">Global Banking Web Platform</h3>
+                            <span class="text-emerald-400 text-[10px] font-bold px-2 py-0.5 rounded bg-emerald-500/10 border border-emerald-500/20">+240% Conv.</span>
+                        </div>
+                        <p class="text-slate-400 text-xs mb-4 leading-relaxed">Secure multi-currency transaction engine built with lightning-fast benchmarks.</p>
+                        <div class="flex gap-2 mb-6">
+                            <span class="text-[10px] px-2 py-0.5 rounded-lg bg-slate-900 text-slate-300 border border-slate-800">React</span>
+                            <span class="text-[10px] px-2 py-0.5 rounded-lg bg-slate-900 text-slate-300 border border-slate-800">Node.js</span>
+                            <span class="text-[10px] px-2 py-0.5 rounded-lg bg-slate-900 text-slate-300 border border-slate-800">AWS</span>
+                        </div>
+                    </div>
+                    <a href="https://github.com" target="_blank" class="inline-flex items-center justify-center gap-2 w-full py-2.5 rounded-xl bg-indigo-600/10 hover:bg-indigo-600/20 text-indigo-300 border border-indigo-500/20 text-xs font-semibold transition-all">
+                        <span data-en="View Project Link" data-hi="प्रोजेक्ट लिंक देखें">View Project Link</span> <i class="fa-solid fa-arrow-up-right-from-square text-[10px]"></i>
+                    </a>
+                </div>
+
+                <div class="glass-card p-6 rounded-[2.5rem] flex flex-col justify-between group">
+                    <div>
+                        <div class="h-44 rounded-2xl bg-gradient-to-br from-purple-950 to-pink-950 flex items-center justify-center relative overflow-hidden mb-6 border border-white/5">
+                            <span class="text-sm font-extrabold tracking-widest text-purple-300">NEURAL AI STUDIO</span>
+                        </div>
+                        <div class="flex items-center justify-between mb-2">
+                            <h3 class="text-base font-bold text-white">Generative Design Portal</h3>
+                            <span class="text-indigo-400 text-[10px] font-bold px-2 py-0.5 rounded bg-indigo-500/10 border border-indigo-500/20">99.9% Uptime</span>
+                        </div>
+                        <p class="text-slate-400 text-xs mb-4 leading-relaxed">Interactive web canvas platform rendering complex machine learning assets in real time.</p>
+                        <div class="flex gap-2 mb-6">
+                            <span class="text-[10px] px-2 py-0.5 rounded-lg bg-slate-900 text-slate-300 border border-slate-800">Next.js</span>
+                            <span class="text-[10px] px-2 py-0.5 rounded-lg bg-slate-900 text-slate-300 border border-slate-800">Three.js</span>
+                            <span class="text-[10px] px-2 py-0.5 rounded-lg bg-slate-900 text-slate-300 border border-slate-800">Python</span>
+                        </div>
+                    </div>
+                    <a href="https://github.com" target="_blank" class="inline-flex items-center justify-center gap-2 w-full py-2.5 rounded-xl bg-indigo-600/10 hover:bg-indigo-600/20 text-indigo-300 border border-indigo-500/20 text-xs font-semibold transition-all">
+                        <span data-en="View Project Link" data-hi="प्रोजेक्ट लिंक देखें">View Project Link</span> <i class="fa-solid fa-arrow-up-right-from-square text-[10px]"></i>
+                    </a>
+                </div>
+
+                <div class="glass-card p-6 rounded-[2.5rem] flex flex-col justify-between group">
+                    <div>
+                        <div class="h-44 rounded-2xl bg-gradient-to-br from-blue-950 to-cyan-950 flex items-center justify-center relative overflow-hidden mb-6 border border-white/5">
+                            <span class="text-sm font-extrabold tracking-widest text-cyan-300">CLOUD METRICS</span>
+                        </div>
+                        <div class="flex items-center justify-between mb-2">
+                            <h3 class="text-base font-bold text-white">DevOps Observability Suite</h3>
+                            <span class="text-cyan-400 text-[10px] font-bold px-2 py-0.5 rounded bg-cyan-500/10 border border-cyan-500/20">Sub-10ms</span>
+                        </div>
+                        <p class="text-slate-400 text-xs mb-4 leading-relaxed">Enterprise server monitoring and automated alert mesh dashboard.</p>
+                        <div class="flex gap-2 mb-6">
+                            <span class="text-[10px] px-2 py-0.5 rounded-lg bg-slate-900 text-slate-300 border border-slate-800">Vue.js</span>
+                            <span class="text-[10px] px-2 py-0.5 rounded-lg bg-slate-900 text-slate-300 border border-slate-800">Golang</span>
+                            <span class="text-[10px] px-2 py-0.5 rounded-lg bg-slate-900 text-slate-300 border border-slate-800">Docker</span>
+                        </div>
+                    </div>
+                    <a href="https://github.com" target="_blank" class="inline-flex items-center justify-center gap-2 w-full py-2.5 rounded-xl bg-indigo-600/10 hover:bg-indigo-600/20 text-indigo-300 border border-indigo-500/20 text-xs font-semibold transition-all">
+                        <span data-en="View Project Link" data-hi="प्रोजेक्ट लिंक देखें">View Project Link</span> <i class="fa-solid fa-arrow-up-right-from-square text-[10px]"></i>
+                    </a>
+                </div>
+            </div>
+        </section>
+
+        <section id="pricing" class="py-24 px-6 max-w-7xl mx-auto bg-slate-900/30 border-y border-white/5">
+            <div class="text-center mb-16">
+                <h2 class="text-3xl md:text-4xl font-extrabold mb-3 text-white" data-en="Transparent Investment Plans" data-hi="पारदर्शी निवेश योजनाएं">Transparent Investment Plans</h2>
+                <p class="text-slate-400 text-sm" data-en="Select a plan to auto-connect with our project booking team." data-hi="हमारी प्रोजेक्ट बुकिंग टीम से ऑटो-कनेक्ट करने के लिए एक योजना चुनें।">Select a plan to auto-connect with our project booking team.</p>
+            </div>
+            
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+                <div class="glass-card p-8 rounded-[2.5rem] flex flex-col justify-between">
+                    <div>
+                        <h3 class="text-lg font-bold mb-2 text-white" data-en="Starter Package" data-hi="स्टार्टर पैकेज">Starter Package</h3>
+                        <p class="text-slate-400 text-xs mb-6" data-en="Ideal for emerging startups & high-impact landing pages." data-hi="उभरते स्टार्टअप और हाई-इम्पैक्ट लैंडिंग पेज के लिए आदर्श।">Ideal for emerging startups & high-impact landing pages.</p>
+                        <div class="text-3xl font-extrabold mb-6 text-white">$999 <span class="text-xs font-normal text-slate-500" data-en="/ project" data-hi="/ प्रोजेक्ट">/ project</span></div>
+                        <ul class="space-y-3 text-xs text-slate-300 mb-8">
+                            <li><i class="fa-solid fa-check text-indigo-400 mr-2"></i> <span data-en="Custom Landing Page" data-hi="कस्टम लैंडिंग पेज">Custom Landing Page</span></li>
+                            <li><i class="fa-solid fa-check text-indigo-400 mr-2"></i> <span data-en="Basic Smooth Animations" data-hi="बेसिक स्मूथ एनिमेशन">Basic Smooth Animations</span></li>
+                            <li><i class="fa-solid fa-check text-indigo-400 mr-2"></i> <span data-en="SEO & Speed Optimized" data-hi="SEO और स्पीड ऑप्टिमाइज़्ड">SEO & Speed Optimized</span></li>
+                            <li><i class="fa-solid fa-check text-indigo-400 mr-2"></i> <span data-en="2 Weeks Delivery" data-hi="2 सप्ताह में डिलीवरी">2 Weeks Delivery</span></li>
+                        </ul>
+                    </div>
+                    <button onclick="selectPlan('Starter Package ($999)')" class="w-full py-3.5 rounded-xl glass-card font-semibold hover:bg-white/5 transition-all border border-white/10 text-center text-xs tracking-wide" data-en="Select Starter" data-hi="स्टार्टर चुनें">
+                        Select Starter
+                    </button>
+                </div>
+
+                <div class="glass-card p-8 rounded-[2.5rem] flex flex-col justify-between relative border-2 border-indigo-500 shadow-2xl shadow-indigo-500/20 bg-gradient-to-b from-indigo-950/40 to-slate-900/80">
+                    <div class="absolute -top-3.5 left-1/2 -translate-x-1/2 px-4 py-1 rounded-full bg-indigo-500 text-white text-[10px] font-extrabold uppercase tracking-widest shadow-md">
+                        🔥 Most Popular
+                    </div>
+                    <div>
+                        <h3 class="text-lg font-bold mb-2 mt-2 text-white" data-en="Growth Suite" data-hi="ग्रोथ सुइट">Growth Suite</h3>
+                        <p class="text-slate-400 text-xs mb-6" data-en="Built for expanding businesses requiring dynamic architecture." data-hi="गतिशील वास्तुकला की आवश्यकता वाले बढ़ते व्यवसायों के लिए निर्मित।">Built for expanding businesses requiring dynamic architecture.</p>
+                        <div class="text-3xl font-extrabold mb-6 text-white">$2,499 <span class="text-xs font-normal text-slate-500" data-en="/ project" data-hi="/ प्रोजेक्ट">/ project</span></div>
+                        <ul class="space-y-3 text-xs text-slate-300 mb-8">
+                            <li><i class="fa-solid fa-check text-indigo-400 mr-2"></i> <span data-en="Full Multi-Page Dynamic App" data-hi="फुल मल्टी-पेज डायनेमिक ऐप">Full Multi-Page Dynamic App</span></li>
+                            <li><i class="fa-solid fa-check text-indigo-400 mr-2"></i> <span data-en="Advanced GSAP Motion UI/UX" data-hi="उन्नत GSAP मोशन UI/UX">Advanced GSAP Motion UI/UX</span></li>
+                            <li><i class="fa-solid fa-check text-indigo-400 mr-2"></i> <span data-en="CRM & Form Integration" data-hi="CRM और फॉर्म एकीकरण">CRM & Form Integration</span></li>
+                            <li><i class="fa-solid fa-check text-indigo-400 mr-2"></i> <span data-en="Edge Cloud Deployment" data-hi="एज क्लाउड परिनियोजन">Edge Cloud Deployment</span></li>
+                        </ul>
+                    </div>
+                    <button onclick="selectPlan('Growth Suite ($2,499) - Most Popular')" class="w-full py-3.5 rounded-xl bg-gradient-to-r from-indigo-500 to-purple-600 font-bold text-white shadow-lg shadow-indigo-500/25 hover:opacity-95 transition-all text-center text-xs tracking-wide" data-en="Select Growth Suite" data-hi="ग्रोथ सुइट चुनें">
+                        Select Growth Suite
+                    </button>
+                </div>
+
+                <div class="glass-card p-8 rounded-[2.5rem] flex flex-col justify-between">
+                    <div>
+                        <h3 class="text-lg font-bold mb-2 text-white" data-en="Enterprise Custom" data-hi="एंटरप्राइज कस्टम">Enterprise Custom</h3>
+                        <p class="text-slate-400 text-xs mb-6" data-en="Tailored bespoke engineering for high-scale enterprise systems." data-hi="उच्च-स्तरीय उद्यम प्रणालियों के लिए अनुकूलित इंजीनियरिंग।">Tailored bespoke engineering for high-scale enterprise systems.</p>
+                        <div class="text-3xl font-extrabold mb-6 text-white" data-en="Custom" data-hi="कस्टम">Custom <span class="text-xs font-normal text-slate-500" data-en="quote" data-hi="कोट">quote</span></div>
+                        <ul class="space-y-3 text-xs text-slate-300 mb-8">
+                            <li><i class="fa-solid fa-check text-indigo-400 mr-2"></i> <span data-en="Full-Stack Web App / SaaS" data-hi="फुल-स्टैक वेब ऐप / SaaS">Full-Stack Web App / SaaS</span></li>
+                            <li><i class="fa-solid fa-check text-indigo-400 mr-2"></i> <span data-en="Dedicated Lead Developers" data-hi="समर्पित लीड डेवलपर्स">Dedicated Lead Developers</span></li>
+                            <li><i class="fa-solid fa-check text-indigo-400 mr-2"></i> <span data-en="Microservices Architecture" data-hi="माइक्रोसर्विसेज आर्किटेक्चर">Microservices Architecture</span></li>
+                            <li><i class="fa-solid fa-check text-indigo-400 mr-2"></i> <span data-en="24/7 Priority SLA Support" data-hi="24/7 प्राथमिकता SLA समर्थन">24/7 Priority SLA Support</span></li>
+                        </ul>
+                    </div>
+                    <button onclick="selectPlan('Enterprise Custom Solution')" class="w-full py-3.5 rounded-xl glass-card font-semibold hover:bg-white/5 transition-all border border-white/10 text-center text-xs tracking-wide" data-en="Request Quote" data-hi="कोट अनुरोध करें">
+                        Request Quote
+                    </button>
+                </div>
+            </div>
+        </section>
+
+        <section id="testimonials" class="py-24 px-6 max-w-7xl mx-auto">
+            <div class="text-center mb-16">
+                <h2 class="text-3xl md:text-4xl font-extrabold mb-3 text-white" data-en="What Global Clients Say" data-hi="वैश्विक ग्राहकों के विचार">What Global Clients Say</h2>
+                <p class="text-slate-400 text-sm" data-en="Real feedback from founders and engineering leaders." data-hi="संस्थापकों और इंजीनियरिंग नेताओं से वास्तविक प्रतिक्रिया।">Real feedback from founders and engineering leaders.</p>
+            </div>
+            
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+                <div class="glass-card p-8 rounded-[2.5rem] flex flex-col justify-between">
+                    <p class="text-slate-300 text-xs sm:text-sm leading-relaxed mb-6 italic" data-en="&ldquo;The merger of Skyline Syntax and Aesh has created an absolute powerhouse. They delivered our enterprise web suite two weeks ahead of schedule.&rdquo;" data-hi="&ldquo;स्काईलाइन सिंटैक्स और ऐश के विलय ने एक पूर्ण पावरहाउस बनाया है। उन्होंने समय से दो हफ्ते पहले हमारी उद्यम वेब सुइट वितरित की।&rdquo;">&ldquo;The merger of Skyline Syntax and Aesh has created an absolute powerhouse. They delivered our enterprise web suite two weeks ahead of schedule.&rdquo;</p>
+                    <div>
+                        <h4 class="font-bold text-white text-xs sm:text-sm">Marcus Vance</h4>
+                        <span class="text-[10px] text-indigo-400" data-en="CTO, Apex Systems (Canada)" data-hi="CTO, एपेक्स सिस्टम्स (कनाडा)">CTO, Apex Systems (Canada)</span>
+                    </div>
+                </div>
+                <div class="glass-card p-8 rounded-[2.5rem] flex flex-col justify-between">
+                    <p class="text-slate-300 text-xs sm:text-sm leading-relaxed mb-6 italic" data-en="&ldquo;Their attention to modern motion UI/UX design is unmatched. Our customer conversion skyrocketed by 200% within days of launch.&rdquo;" data-hi="&ldquo;आधुनिक गति UI/UX डिज़ाइन पर उनका ध्यान बेजोड़ है। लॉन्च के कुछ दिनों के भीतर हमारा ग्राहक रूपांतरण 200% बढ़ गया।&rdquo;">&ldquo;Their attention to modern motion UI/UX design is unmatched. Our customer conversion skyrocketed by 200% within days of launch.&rdquo;</p>
+                    <div>
+                        <h4 class="font-bold text-white text-xs sm:text-sm">Priya Sharma</h4>
+                        <span class="text-[10px] text-indigo-400" data-en="Founder, NovaSync Labs (India)" data-hi="संस्थापक, नोवासिंक लैब्स (भारत)">Founder, NovaSync Labs (India)</span>
+                    </div>
+                </div>
+                <div class="glass-card p-8 rounded-[2.5rem] flex flex-col justify-between">
+                    <p class="text-slate-300 text-xs sm:text-sm leading-relaxed mb-6 italic" data-en="&ldquo;World-class cross-border communication and rock-solid cloud architecture. Highly recommend their Growth Suite package!&rdquo;" data-hi="&ldquo;विश्व स्तरीय क्रॉस-बॉर्डर संचार और ठोस क्लाउड वास्तुकला। उनकी ग्रोथ सुइट पैकेज की अत्यधिक अनुशंसा करते हैं!&rdquo;">&ldquo;World-class cross-border communication and rock-solid cloud architecture. Highly recommend their Growth Suite package!&rdquo;</p>
+                    <div>
+                        <h4 class="font-bold text-white text-xs sm:text-sm">Liam O'Connor</h4>
+                        <span class="text-[10px] text-indigo-400" data-en="Product Lead, Zephyr Media (Australia)" data-hi="उत्पाद प्रमुख, ज़ेफ़र मीडिया (ऑस्ट्रेलिया)">Product Lead, Zephyr Media (Australia)</span>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section id="contact" class="py-24 px-6 max-w-3xl mx-auto">
+            <div class="glass-card p-8 md:p-12 rounded-[2.5rem] border border-indigo-500/30 relative shadow-2xl">
+                <div class="text-center mb-8">
+                    <h2 class="text-2xl md:text-3xl font-extrabold mb-2 text-white" data-en="Let's Build Something Great" data-hi="आइए कुछ बेहतरीन बनाएं">Let's Build Something Great</h2>
+                    <p class="text-slate-400 text-xs" data-en="Fill out the form below or pick a plan above to connect instantly." data-hi="तुरंत जुड़ने के लिए नीचे दिया गया फॉर्म भरें या ऊपर एक योजना चुनें।">Fill out the form below or pick a plan above to connect instantly.</p>
+                </div>
+
+                <form onsubmit="handleContactSubmit(event)" class="space-y-5">
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-5">
+                        <div>
+                            <label class="block text-[10px] font-bold text-slate-400 uppercase mb-2 tracking-wider" data-en="Full Name" data-hi="पूरा नाम">Full Name</label>
+                            <input type="text" required placeholder="John Doe" class="w-full bg-slate-900/90 border border-slate-800 rounded-xl px-4 py-3 text-white focus:outline-none focus:border-indigo-500 text-xs shadow-inner">
+                        </div>
+                        <div>
+                            <label class="block text-[10px] font-bold text-slate-400 uppercase mb-2 tracking-wider" data-en="Business Email" data-hi="व्यावसायिक ईमेल">Business Email</label>
+                            <input type="email" required placeholder="john@company.com" class="w-full bg-slate-900/90 border border-slate-800 rounded-xl px-4 py-3 text-white focus:outline-none focus:border-indigo-500 text-xs shadow-inner">
+                        </div>
+                    </div>
+                    <div>
+                        <label class="block text-[10px] font-bold text-slate-400 uppercase mb-2 tracking-wider" data-en="Selected Plan / Package" data-hi="चयनित योजना / पैकेज">Selected Plan / Package</label>
+                        <input type="text" id="selected-plan-input" value="General Inquiry" class="w-full bg-slate-900/90 border border-slate-800 rounded-xl px-4 py-3 text-indigo-300 font-bold focus:outline-none text-xs shadow-inner" readonly>
+                    </div>
+                    <div>
+                        <label class="block text-[10px] font-bold text-slate-400 uppercase mb-2 tracking-wider" data-en="Project Details / Message" data-hi="परियोजना विवरण / संदेश">Project Details / Message</label>
+                        <textarea rows="4" required placeholder="Tell us about your project goals..." class="w-full bg-slate-900/90 border border-slate-800 rounded-xl px-4 py-3 text-white focus:outline-none focus:border-indigo-500 text-xs resize-none shadow-inner"></textarea>
+                    </div>
+                    <button type="submit" class="w-full py-4 rounded-xl bg-gradient-to-r from-indigo-500 via-purple-600 to-pink-500 font-bold text-white shadow-xl shadow-indigo-500/25 hover:opacity-95 transition-all text-center text-xs md:text-sm tracking-wide" data-en="Send Message & Launch Project" data-hi="संदेश भेजें और प्रोजेक्ट लॉन्च करें">
+                        Send Message & Launch Project
+                    </button>
+                </form>
+            </div>
+        </section>
+
+        <footer class="py-10 border-t border-white/5 text-center text-xs text-slate-500">
+            <div class="max-w-7xl mx-auto px-6 flex flex-col md:flex-row items-center justify-between gap-4">
+                <p data-en="© 2026 Skyline Syntax (Powered by Aesh Software Agency). All rights reserved." data-hi="© 2026 स्काईलाइन सिंटैक्स (ऐश सॉफ्टवेयर एजेंसी द्वारा संचालित)। सर्वाधिकार सुरक्षित।">© 2026 Skyline Syntax (Powered by Aesh Software Agency). All rights reserved.</p>
+                <div class="flex gap-6 text-slate-400 text-xs">
+                    <span>🇮🇳 India</span>
+                    <span>🇨🇦 Canada</span>
+                    <span>🇦🇺 Australia</span>
+                </div>
+            </div>
+        </footer>
+
+    </div>
+
+    <div id="admin-login-modal" class="fixed inset-0 z-50 hidden items-center justify-center bg-slate-950/90 backdrop-blur-xl px-4">
+        <div class="glass-card p-8 rounded-[2.5rem] max-w-sm w-full shadow-2xl relative border border-amber-500/30">
+            <button onclick="closeAdminLoginModal()" class="absolute top-5 right-5 text-slate-400 hover:text-white"><i class="fa-solid fa-xmark"></i></button>
+            <div class="w-12 h-12 rounded-xl bg-amber-500/10 text-amber-400 border border-amber-500/30 flex items-center justify-center text-xl mb-4">
+                <i class="fa-solid fa-lock"></i>
+            </div>
+            <h3 class="text-xl font-extrabold text-white mb-1">Admin Portal Access</h3>
+            <p class="text-slate-400 text-xs mb-6">Enter secure credentials to manage clients.</p>
+            <form onsubmit="handleAdminLogin(event)" class="space-y-4">
+                <div>
+                    <label class="block text-[10px] font-bold text-slate-400 uppercase mb-1">Username</label>
+                    <input type="text" id="admin-user" required placeholder="Enter username" class="w-full bg-slate-900 border border-slate-800 rounded-xl px-3.5 py-2.5 text-xs text-white focus:outline-none focus:border-amber-500">
+                </div>
+                <div>
+                    <label class="block text-[10px] font-bold text-slate-400 uppercase mb-1">Password</label>
+                    <input type="password" id="admin-pass" required placeholder="Enter password" class="w-full bg-slate-900 border border-slate-800 rounded-xl px-3.5 py-2.5 text-xs text-white focus:outline-none focus:border-amber-500">
+                </div>
+                <p id="login-error" class="text-rose-400 text-[11px] hidden font-semibold">Invalid username or password. Please try again.</p>
+                <button type="submit" class="w-full py-3 rounded-xl bg-gradient-to-r from-amber-500 to-rose-600 font-bold text-white text-xs shadow-lg shadow-amber-600/20 hover:opacity-95">
+                    Authenticate & Enter
+                </button>
+            </form>
+        </div>
+    </div>
+
+    <div id="admin-dashboard" class="fixed inset-0 z-50 hidden bg-slate-950 overflow-y-auto px-4 py-8">
+        <div class="max-w-7xl mx-auto">
+            <div class="flex items-center justify-between pb-6 mb-8 border-b border-white/10">
+                <div class="flex items-center gap-3">
+                    <div class="w-10 h-10 rounded-xl bg-gradient-to-tr from-amber-500 to-rose-600 flex items-center justify-center font-extrabold text-sm text-white">
+                        AP
+                    </div>
+                    <div>
+                        <h2 class="text-lg font-extrabold text-white">Skyline Syntax x Aesh | Client Management Dashboard</h2>
+                        <p class="text-[10px] text-amber-400 font-bold uppercase tracking-wider">Secure Administrative Panel</p>
+                    </div>
+                </div>
+                <div class="flex items-center gap-3">
+                    <button onclick="openAddClientModal()" class="px-4 py-2.5 rounded-xl bg-indigo-600 hover:bg-indigo-500 text-xs font-bold text-white shadow-lg transition-all flex items-center gap-2">
+                        <i class="fa-solid fa-plus text-[10px]"></i> Add New Client
+                    </button>
+                    <button onclick="closeAdminDashboard()" class="px-4 py-2.5 rounded-xl bg-slate-900 hover:bg-slate-800 text-xs font-bold text-slate-300 border border-slate-800">
+                        <i class="fa-solid fa-arrow-right-from-bracket mr-1"></i> Exit Dashboard
+                    </button>
+                </div>
+            </div>
+
+            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5 mb-8">
+                <div class="glass-card p-6 rounded-2xl">
+                    <span class="text-[10px] text-slate-400 font-bold uppercase tracking-wider block mb-1">Total Active Clients</span>
+                    <h3 id="stat-total-clients" class="text-2xl font-extrabold text-white">0</h3>
+                </div>
+                <div class="glass-card p-6 rounded-2xl">
+                    <span class="text-[10px] text-slate-400 font-bold uppercase tracking-wider block mb-1">Total Revenue Earned</span>
+                    <h3 id="stat-total-paid" class="text-2xl font-extrabold text-emerald-400">$0</h3>
+                </div>
+                <div class="glass-card p-6 rounded-2xl">
+                    <span class="text-[10px] text-slate-400 font-bold uppercase tracking-wider block mb-1">Total Pending Dues</span>
+                    <h3 id="stat-total-pending" class="text-2xl font-extrabold text-rose-400">$0</h3>
+                </div>
+                <div class="glass-card p-6 rounded-2xl">
+                    <span class="text-[10px] text-slate-400 font-bold uppercase tracking-wider block mb-1">Hosting Platforms Active</span>
+                    <h3 class="text-2xl font-extrabold text-indigo-400">AWS / Vercel</h3>
+                </div>
+            </div>
+
+            <div class="glass-card rounded-2xl overflow-hidden border border-white/5">
+                <div class="p-6 border-b border-white/10 flex items-center justify-between">
+                    <h3 class="font-extrabold text-sm text-white">Client Project Ledger & Hosting Status</h3>
+                    <input type="text" id="client-search" onkeyup="filterClients()" placeholder="Search client name or website..." class="bg-slate-900 border border-slate-800 rounded-xl px-4 py-2 text-xs text-white placeholder-slate-500 focus:outline-none focus:border-indigo-500 w-64">
+                </div>
+                <div class="overflow-x-auto">
+                    <table class="w-full text-left text-xs">
+                        <thead class="bg-slate-900/80 text-slate-400 font-bold uppercase tracking-wider border-b border-white/10">
+                            <tr>
+                                <th class="py-4 px-6">Client Name</th>
+                                <th class="py-4 px-6">Phone Number</th>
+                                <th class="py-4 px-6">Website Built</th>
+                                <th class="py-4 px-6">Hosting Platform</th>
+                                <th class="py-4 px-6">Start Date</th>
+                                <th class="py-4 px-6">Expiry Date</th>
+                                <th class="py-4 px-6">Total / Paid / Pending</th>
+                                <th class="py-4 px-6 text-center">Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody id="clients-table-body" class="divide-y divide-white/5 text-slate-300">
+                            </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div id="client-modal" class="fixed inset-0 z-50 hidden items-center justify-center bg-slate-950/90 backdrop-blur-xl px-4">
+        <div class="glass-card p-8 rounded-[2.5rem] max-w-lg w-full shadow-2xl relative border border-indigo-500/30">
+            <button onclick="closeClientModal()" class="absolute top-5 right-5 text-slate-400 hover:text-white"><i class="fa-solid fa-xmark"></i></button>
+            <h3 id="client-modal-title" class="text-xl font-extrabold text-white mb-4">Add New Client Record</h3>
+            <form id="client-form" onsubmit="saveClient(event)" class="space-y-4">
+                <input type="hidden" id="client-edit-index" value="-1">
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div>
+                        <label class="block text-[10px] font-bold text-slate-400 uppercase mb-1">Client Name</label>
+                        <input type="text" id="modal-name" required placeholder="Marcus Vance" class="w-full bg-slate-900 border border-slate-800 rounded-xl px-3.5 py-2.5 text-xs text-white focus:outline-none focus:border-indigo-500">
+                    </div>
+                    <div>
+                        <label class="block text-[10px] font-bold text-slate-400 uppercase mb-1">Phone Number</label>
+                        <input type="text" id="modal-phone" required placeholder="+1 (555) 019-2834" class="w-full bg-slate-900 border border-slate-800 rounded-xl px-3.5 py-2.5 text-xs text-white focus:outline-none focus:border-indigo-500">
+                    </div>
+                </div>
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div>
+                        <label class="block text-[10px] font-bold text-slate-400 uppercase mb-1">Website Name / URL</label>
+                        <input type="text" id="modal-website" required placeholder="apexsystems.io" class="w-full bg-slate-900 border border-slate-800 rounded-xl px-3.5 py-2.5 text-xs text-white focus:outline-none focus:border-indigo-500">
+                    </div>
+                    <div>
+                        <label class="block text-[10px] font-bold text-slate-400 uppercase mb-1">Hosting Platform</label>
+                        <input type="text" id="modal-hosting" required placeholder="AWS / Vercel" class="w-full bg-slate-900 border border-slate-800 rounded-xl px-3.5 py-2.5 text-xs text-white focus:outline-none focus:border-indigo-500">
+                    </div>
+                </div>
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div>
+                        <label class="block text-[10px] font-bold text-slate-400 uppercase mb-1">Service Start Date</label>
+                        <input type="date" id="modal-start" required class="w-full bg-slate-900 border border-slate-800 rounded-xl px-3.5 py-2.5 text-xs text-white focus:outline-none focus:border-indigo-500">
+                    </div>
+                    <div>
+                        <label class="block text-[10px] font-bold text-slate-400 uppercase mb-1">Service Expiry Date</label>
+                        <input type="date" id="modal-expiry" required class="w-full bg-slate-900 border border-slate-800 rounded-xl px-3.5 py-2.5 text-xs text-white focus:outline-none focus:border-indigo-500">
+                    </div>
+                </div>
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                    <div>
+                        <label class="block text-[10px] font-bold text-slate-400 uppercase mb-1">Total Amount ($)</label>
+                        <input type="number" id="modal-total" required placeholder="2500" class="w-full bg-slate-900 border border-slate-800 rounded-xl px-3.5 py-2.5 text-xs text-white focus:outline-none focus:border-indigo-500">
+                    </div>
+                    <div>
+                        <label class="block text-[10px] font-bold text-slate-400 uppercase mb-1">Paid Amount ($)</label>
+                        <input type="number" id="modal-paid" required placeholder="2000" class="w-full bg-slate-900 border border-slate-800 rounded-xl px-3.5 py-2.5 text-xs text-white focus:outline-none focus:border-indigo-500">
+                    </div>
+                    <div>
+                        <label class="block text-[10px] font-bold text-slate-400 uppercase mb-1">Pending Amount ($)</label>
+                        <input type="number" id="modal-pending" required placeholder="500" class="w-full bg-slate-900 border border-slate-800 rounded-xl px-3.5 py-2.5 text-xs text-white focus:outline-none focus:border-indigo-500">
+                    </div>
+                </div>
+                <button type="submit" class="w-full py-3.5 rounded-xl bg-gradient-to-r from-indigo-500 to-purple-600 font-bold text-white text-xs shadow-lg hover:opacity-95 mt-2">
+                    Save Client Record
+                </button>
+            </form>
+        </div>
+    </div>
+
+    <script>
+        // 1. Super Easy Verification Logic (Correct Answer is 8)
+        const correctAnswer = 8;
+
+        function verifyPuzzle(e) {
+            e.preventDefault();
+            const userAns = parseInt(document.getElementById('puzzle-answer').value);
+            const errorEl = document.getElementById('puzzle-error');
+            
+            if (userAns === correctAnswer) {
+                const overlay = document.getElementById('verification-overlay');
+                gsap.to(overlay, {
+                    opacity: 0,
+                    duration: 0.8,
+                    onComplete: () => {
+                        overlay.style.display = 'none';
+                    }
+                });
+            } else {
+                errorEl.classList.remove('hidden');
+                gsap.fromTo(errorEl, { x: -10 }, { x: 10, repeat: 3, yoyo: true, duration: 0.1 });
+            }
+        }
+
+        // 2. Language Switcher (English <-> Hindi)
+        let currentLang = 'en';
+        function toggleLanguage() {
+            currentLang = currentLang === 'en' ? 'hi' : 'en';
+            document.getElementById('lang-label').innerText = currentLang === 'en' ? 'HI / EN' : 'EN / HI';
+            
+            const elements = document.querySelectorAll('[data-en]');
+            elements.forEach(el => {
+                const text = el.getAttribute(`data-${currentLang}`);
+                if (text) {
+                    el.innerText = text;
+                }
+            });
+        }
+
+        // 3. Admin Portal Authentication & Management Logic (No hints displayed)
+        let clientsData = [
+            { name: "Marcus Vance", phone: "+1 (555) 019-2834", website: "apexsystems.io", hosting: "AWS Cloud", start: "2025-01-15", expiry: "2027-01-15", total: 4500, paid: 4000, pending: 500 },
+            { name: "Priya Sharma", phone: "+91 98765 43210", website: "novasynclabs.in", hosting: "Vercel Edge", start: "2025-06-10", expiry: "2026-06-10", total: 2500, paid: 2500, pending: 0 },
+            { name: "Liam O'Connor", phone: "+61 412 345 678", website: "zephyrmedia.com.au", hosting: "Cloudflare", start: "2025-09-01", expiry: "2026-09-01", total: 3200, paid: 1500, pending: 1700 }
+        ];
+
+        function openAdminLoginModal() {
+            document.getElementById('admin-login-modal').classList.remove('hidden');
+            document.getElementById('admin-login-modal').classList.add('flex');
+        }
+
+        function closeAdminLoginModal() {
+            document.getElementById('admin-login-modal').classList.remove('flex');
+            document.getElementById('admin-login-modal').classList.add('hidden');
+        }
+
+        function handleAdminLogin(e) {
+            e.preventDefault();
+            const user = document.getElementById('admin-user').value;
+            const pass = document.getElementById('admin-pass').value;
+            const err = document.getElementById('login-error');
+
+            // Default credentials: username "admin", password "aesh2026"
+            if (user === 'admin' && pass === 'aesh2026') {
+                closeAdminLoginModal();
+                document.getElementById('admin-user').value = '';
+                document.getElementById('admin-pass').value = '';
+                err.classList.add('hidden');
+                
+                // Open Dashboard
+                document.getElementById('admin-dashboard').classList.remove('hidden');
+                renderClientsTable();
+            } else {
+                err.classList.remove('hidden');
+                gsap.fromTo(err, { x: -10 }, { x: 10, repeat: 3, yoyo: true, duration: 0.1 });
+            }
+        }
+
+        function closeAdminDashboard() {
+            document.getElementById('admin-dashboard').classList.add('hidden');
+        }
+
+        function renderClientsTable() {
+            const tbody = document.getElementById('clients-table-body');
+            tbody.innerHTML = '';
+            
+            let totalClients = clientsData.length;
+            let sumPaid = 0;
+            let sumPending = 0;
+
+            clientsData.forEach((client, index) => {
+                sumPaid += Number(client.paid);
+                sumPending += Number(client.pending);
+
+                const tr = document.createElement('tr');
+                tr.className = "hover:bg-white/5 transition-colors";
+                tr.innerHTML = `
+                    <td class="py-4 px-6 font-bold text-white">${client.name}</td>
+                    <td class="py-4 px-6 font-mono text-slate-300">${client.phone}</td>
+                    <td class="py-4 px-6 text-indigo-400 font-semibold"><a href="https://${client.website}" target="_blank">${client.website} <i class="fa-solid fa-external-link text-[9px]"></i></a></td>
+                    <td class="py-4 px-6"><span class="px-2 py-1 rounded bg-slate-900 border border-slate-800 text-[10px] font-bold text-purple-300">${client.hosting}</span></td>
+                    <td class="py-4 px-6 text-slate-400">${client.start}</td>
+                    <td class="py-4 px-6 text-amber-400 font-semibold">${client.expiry}</td>
+                    <td class="py-4 px-6 font-mono"><span class="text-white">$${client.total}</span> / <span class="text-emerald-400">$${client.paid}</span> / <span class="text-rose-400">$${client.pending}</span></td>
+                    <td class="py-4 px-6 text-center space-x-2">
+                        <button onclick="editClient(${index})" class="text-indigo-400 hover:text-indigo-300 p-1"><i class="fa-solid fa-pen-to-square"></i></button>
+                        <button onclick="deleteClient(${index})" class="text-rose-400 hover:text-rose-300 p-1"><i class="fa-solid fa-trash"></i></button>
+                    </td>
+                `;
+                tbody.appendChild(tr);
+            });
+
+            document.getElementById('stat-total-clients').innerText = totalClients;
+            document.getElementById('stat-total-paid').innerText = `$${sumPaid.toLocaleString()}`;
+            document.getElementById('stat-total-pending').innerText = `$${sumPending.toLocaleString()}`;
+        }
+
+        function openAddClientModal() {
+            document.getElementById('client-modal-title').innerText = "Add New Client Record";
+            document.getElementById('client-edit-index').value = "-1";
+            document.getElementById('client-form').reset();
+            document.getElementById('client-modal').classList.remove('hidden');
+            document.getElementById('client-modal').classList.add('flex');
+        }
+
+        function closeClientModal() {
+            document.getElementById('client-modal').classList.remove('flex');
+            document.getElementById('client-modal').classList.add('hidden');
+        }
+
+        function saveClient(e) {
+            e.preventDefault();
+            const index = parseInt(document.getElementById('client-edit-index').value);
+            const newClient = {
+                name: document.getElementById('modal-name').value,
+                phone: document.getElementById('modal-phone').value,
+                website: document.getElementById('modal-website').value,
+                hosting: document.getElementById('modal-hosting').value,
+                start: document.getElementById('modal-start').value,
+                expiry: document.getElementById('modal-expiry').value,
+                total: parseFloat(document.getElementById('modal-total').value),
+                paid: parseFloat(document.getElementById('modal-paid').value),
+                pending: parseFloat(document.getElementById('modal-pending').value)
+            };
+
+            if (index === -1) {
+                clientsData.push(newClient);
+            } else {
+                clientsData[index] = newClient;
+            }
+
+            closeClientModal();
+            renderClientsTable();
+        }
+
+        function editClient(index) {
+            const client = clientsData[index];
+            document.getElementById('client-modal-title').innerText = "Edit Client Record";
+            document.getElementById('client-edit-index').value = index;
+            document.getElementById('modal-name').value = client.name;
+            document.getElementById('modal-phone').value = client.phone;
+            document.getElementById('modal-website').value = client.website;
+            document.getElementById('modal-hosting').value = client.hosting;
+            document.getElementById('modal-start').value = client.start;
+            document.getElementById('modal-expiry').value = client.expiry;
+            document.getElementById('modal-total').value = client.total;
+            document.getElementById('modal-paid').value = client.paid;
+            document.getElementById('modal-pending').value = client.pending;
+
+            document.getElementById('client-modal').classList.remove('hidden');
+            document.getElementById('client-modal').classList.add('flex');
+        }
+
+        function deleteClient(index) {
+            if (confirm("Are you sure you want to delete this client record?")) {
+                clientsData.splice(index, 1);
+                renderClientsTable();
+            }
+        }
+
+        function filterClients() {
+            const query = document.getElementById('client-search').value.toLowerCase();
+            const rows = document.querySelectorAll('#clients-table-body tr');
+            rows.forEach(row => {
+                const text = row.innerText.toLowerCase();
+                row.style.display = text.includes(query) ? '' : 'none';
+            });
+        }
+
+        // 4. Parallax Mouse Movement
+        document.addEventListener("DOMContentLoaded", () => {
+            document.addEventListener("mousemove", (e) => {
+                const x = (e.clientX / window.innerWidth - 0.5) * 15;
+                const y = (e.clientY / window.innerHeight - 0.5) * 15;
+                
+                gsap.to(".parallax-element", {
+                    x: x,
+                    y: y,
+                    duration: 0.5,
+                    ease: "power2.out"
+                });
+            });
+        });
+
+        // 5. Select Plan Helper
+        function selectPlan(planName) {
+            const inputField = document.getElementById('selected-plan-input');
+            inputField.value = planName;
+            document.getElementById('contact').scrollIntoView({ behavior: 'smooth' });
+            
+            gsap.fromTo(inputField, { backgroundColor: '#6366f1' }, { backgroundColor: '#0f172a', duration: 1 });
+        }
+
+        // 6. Contact Form Submission
+        function handleContactSubmit(e) {
+            e.preventDefault();
+            alert(currentLang === 'en' 
+                ? 'Thank you! Your message has been successfully transmitted to Skyline Syntax x Aesh Agency.' 
+                : 'धन्यवाद! आपका संदेश स्काईलाइन सिंटैक्स x ऐश एजेंसी को सफलतापूर्वक भेज दिया गया है।');
+            e.target.reset();
+            document.getElementById('selected-plan-input').value = "General Inquiry";
+        }
+    </script>
+</body>
+</html>
